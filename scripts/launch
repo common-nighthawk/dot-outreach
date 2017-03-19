@@ -1,0 +1,28 @@
+#!/bin/sh
+
+tmux has-session -t outreach
+if [ $? != 0 ]
+then
+  tmux new-session -s outreach -n dev -d
+  tmux split-window -h -p 50 -t outreach
+  tmux send-keys -t outreach:0.0 'cd ~/outreach/server' C-m
+  tmux send-keys -t outreach:0.0 'vim' C-m
+  tmux send-keys -t outreach:0.1 'cd ~/outreach/server' C-m
+
+  tmux new-window -n git -t outreach
+  tmux send-keys -t outreach:1 'cd ~/outreach' C-m
+  tmux send-keys -t outreach:1 'git status' C-m
+
+  tmux new-window -n running -t outreach
+  tmux split-window -h -p 66 -t outreach
+  tmux split-window -h -p 50 -t outreach
+  tmux send-keys -t outreach:2.0 'cd ~/outreach' C-m
+  tmux send-keys -t outreach:2.0 'vagrant ssh' C-m
+  tmux send-keys -t outreach:2.1 'cd ~/outreach/client' C-m
+  tmux send-keys -t outreach:2.1 'npm run fubar ; npm install ; npm start' C-m
+  tmux send-keys -t outreach:2.2 'cd ~/outreach/server' C-m
+  tmux send-keys -t outreach:2.2 'bundle exec rails server'
+
+  tmux select-window -t outreach:0
+fi
+tmux attach -t outreach
